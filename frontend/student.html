@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>Student Dashboard</title>
+
+    <style>
+
+        body {
+            font-family: Arial;
+            background: #f2f2f2;
+            margin: 0;
+        }
+
+        .header {
+            background: #333;
+            color: white;
+            padding: 20px;
+        }
+
+        .container {
+            padding: 30px;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 8px gray;
+        }
+
+        h2 {
+            margin-top: 0;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <div class="header">
+
+        <h1>Student Dashboard</h1>
+
+        <p>Database Integrity System</p>
+        <button onclick="logout()">Logout</button>
+
+    </div>
+
+
+    <div class="container">
+
+        <div class="card">
+
+            <h2>Student Information</h2>
+
+            <p>Student ID: <span id="studentId">1</span></p>
+
+            <p>Name: <span id="studentName">Loading...</span></p>
+
+            <p>Email: <span id="studentEmail">Loading...</span></p>
+
+            <p>Semester: <span id="semester">Loading...</span></p>
+
+        </div>
+
+
+        <div class="card">
+
+            <h2>Account Status</h2>
+
+            <p>Role: Student</p>
+
+            <p>Status: Active</p>
+
+        </div>
+        <div class="card">
+
+    <h2>Enrolled Courses</h2>
+
+    <table border="1" width="100%" cellpadding="10">
+
+        <thead>
+            <tr>
+                <th>Course</th>
+                <th>Credits</th>
+                <th>Semester</th>
+                <th>Grade</th>
+            </tr>
+        </thead>
+
+        <tbody id="courseTable">
+
+        </tbody>
+
+    </table>
+
+</div>
+
+
+<div class="card">
+
+    <h2>Academic Summary</h2>
+
+    <p>Total Courses:
+        <span id="totalCourses">Loading...</span>
+    </p>
+
+    <p>Total Credits:
+        <span id="totalCredits">Loading...</span>
+    </p>
+
+    <p>Grade A:
+        <span id="gradeA">Loading...</span>
+    </p>
+
+    <p>Grade B:
+        <span id="gradeB">Loading...</span>
+    </p>
+
+    <p>Grade C:
+        <span id="gradeC">Loading...</span>
+    </p>
+
+    <p>Grade D:
+        <span id="gradeD">Loading...</span>
+    </p>
+
+    <p>Grade F:
+        <span id="gradeF">Loading...</span>
+    </p>
+
+</div>
+
+</div>
+<script>
+
+    const params = new URLSearchParams(window.location.search);
+    const studentId = params.get("student_id");
+
+    fetch("/student-data?student_id=" + studentId)
+
+        .then(response => response.json())
+
+        .then(data => {
+
+            document.getElementById("studentId").innerText =
+                data.student_id;
+
+            document.getElementById("studentName").innerText =
+                data.name;
+
+            document.getElementById("studentEmail").innerText =
+                data.email;
+
+            document.getElementById("semester").innerText =
+                data.semester;
+
+        })
+
+        .catch(error => {
+
+            console.log("Student data error:", error);
+
+        });
+
+
+    fetch("/student-courses?student_id=" + studentId)
+
+        .then(response => response.json())
+
+        .then(courses => {
+
+            const table =
+                document.getElementById("courseTable");
+
+            courses.forEach(course => {
+
+                const row =
+                    document.createElement("tr");
+
+                row.innerHTML = `
+                    <td>${course.course_name}</td>
+                    <td>${course.credits}</td>
+                    <td>${course.semester}</td>
+                    <td>${course.grade}</td>
+                `;
+
+                table.appendChild(row);
+
+            });
+
+        })
+
+        .catch(error => {
+
+            console.log("Course error:", error);
+
+        });
+    fetch("/student-summary?student_id=" + studentId)
+
+    .then(response => response.json())
+
+    .then(data => {
+
+        document.getElementById("totalCourses").innerText =
+            data.total_courses;
+
+        document.getElementById("totalCredits").innerText =
+            data.total_credits;
+
+        document.getElementById("gradeA").innerText =
+            data.grade_a;
+
+        document.getElementById("gradeB").innerText =
+            data.grade_b;
+
+        document.getElementById("gradeC").innerText =
+            data.grade_c;
+
+        document.getElementById("gradeD").innerText =
+            data.grade_d;
+
+        document.getElementById("gradeF").innerText =
+            data.grade_f;
+
+    })
+
+    .catch(error => {
+
+        console.log("Summary error:", error);
+
+    });
+    function logout() {
+    window.location.href = "/login-page";
+    }
+
+</script>
+
+</body>
+
+</html>
